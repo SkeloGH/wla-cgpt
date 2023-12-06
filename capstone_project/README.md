@@ -1,56 +1,44 @@
+# TailorCV
 
-# Table of Contents
+TailorCV is a Python-based project that processes a user's CV and a job description, and generates a structured JSON output. This approach ensures that users receive only the essential, structured JSON data.
 
-1.  [ChatGPT-Sprint Capstone Project](#org544b433)
-    1.  [Getting Started](#orgcbe7844)
-    2.  [Utilizing the GPT Module](#org9c4e782)
-    3.  [The Challenge](#org6f6550d)
-    4.  [Resources](#orgf8323f5)
+## Features
 
+- Parses a user's CV and a job description.
+- Generates a JSON output with the following schema:
+    + basics: Basic information about the user.
+    + work: An array of objects representing the user's work experience.
+    + skills: An array of strings representing the user's skills.
+    + education: An array of objects representing the user's education.
+    + job: An object representing the details of the job description.
+    + jobDescriptionAlignment: An object showing the alignment between the user's skills and the job description.
 
+## Requirements
 
-<a id="org544b433"></a>
+- Python 3.6 or higher
+- An OpenAI API key
 
-# ChatGPT-Sprint Capstone Project
+## Setup
 
-Welcome to the &ldquo;ChatGPT-Sprint&rdquo; capstone project located within the \`capstone<sub>project</sub>\` directory. This sprint guides you through understanding and effectively integrating the ChatGPT API into your development endeavors. By its conclusion, you&rsquo;ll have crafted a unique tool that harnesses the ChatGPT API, utilizing the module we&rsquo;ve provided as a foundation.
+1. Clone the repository:
 
+```git clone https://github.com/SkeloGH/wla-cgpt.git```
 
-<a id="orgcbe7844"></a>
+2. Navigate to the project directory:
 
-## Getting Started
+```cd capstone_project```
 
-Before plunging into the project:
+3. Install the required packages:
+    
+    ```pip install -r requirements.txt```
 
--   Equip yourself with a basic understanding of Python (or another ChatGPT API-supported language).
--   Set up your development environment (e.g., Python environment, code editor).
--   Procure an OpenAI API key from [OpenAI&rsquo;s platform](https://www.openai.com/).
--   IMPORTANT: Place your API key within a `.env` file as `OPENAI_API_KEY=your_actual_key_here`. This ensures your credentials remain private and are not unintentionally shared.
--   Make sure the \`capstone_project\` directory is your current working directory.
--   Make sure you have the correct version of Python installed (defined in the `.python-version` file).
--   Run \`pip install -r requirements.txt\` to install the required dependencies.
+4. Create a .env file in the project root and add your OpenAI API key:
 
+```OPENAI_API_KEY=YOUR_API_KEY```
 
-<a id="org9c4e782"></a>
+## Usage
+To use TailorCV, run the main.py script with Python:
 
-## Utilizing the GPT Module
+```python main.py```
 
-Within this project, you&rsquo;ll find a pre-configured module designed to simplify interactions with the ChatGPT API. Make sure to leverage this module for streamlined development and a better understanding of best practices when dealing with the ChatGPT API.
-
-
-<a id="org6f6550d"></a>
-
-## The Challenge
-
-Your objective is to design an application or tool optimizing the ChatGPT API. While the details of this project rest in your hands, keep in mind the prime directive: innovation complemented by seamless integration.
-
-
-<a id="orgf8323f5"></a>
-
-## Resources
-
-Aid your development journey with:
-
--   [ChatGPT Official Documentation](https://beta.openai.com/docs/)
--   [OpenAI&rsquo;s API pricing and rate limits](https://openai.com/pricing)
-
+It will spin up a web server on port 5000. You can open the web app by navigating to http://localhost:5000 in your browser.
