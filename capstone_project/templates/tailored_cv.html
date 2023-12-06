@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+      Tailored CV{% if basics %} - {{ basics.name }}{% endif %}{% if job %} / {{job.title}} @ {{ job.company }}{% endif %}</title>
+    </title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+    <style>
+      @media print {
+        .page-break {
+          page-break-before: always;
+        }
+      }
+    </style>
+</head>
+{% if not basics %}
+    <body>
+        <h1>Sorry, we couldn't find any information in your CV.</h1>
+        <p>Please try again with a different CV.</p>
+    </body>
+{% else %}
+  <body>
+    <header>
+      <h1>{{ basics.name }}</h1>
+      <h2>{{ basics.label }}</h2>
+      <p>{{ basics.email }}</p>
+      <p>{{ basics.phone }}</p>
+      <p>{{ basics.website }}</p>
+      <p>{{ basics.summary }}</p>
+    </header>
+    <main>
+      {% if work %}
+        <section>
+          <h2>Work Experience</h2>
+          {% for job in work %}
+            <h3>{{ job.company }}</h3>
+            <p>{{ job.position }}</p>
+            <p>{{ job.startDate }} - {{ job.endDate }}</p>
+            <p>{{ job.summary }}</p>
+          {% endfor %}
+        </section>
+      {% endif %}
+
+      {% if education %}
+        <section>
+          <h2>Education</h2>
+          {% for school in education %}
+              <h3>{{ school.institution }}</h3>
+              <p>{{ school.area }}</p>
+              <p>{{ school.studyType }}</p>
+              <p>{{ school.startDate }} - {{ school.endDate }}</p>
+          {% endfor %}
+        </section>
+      {% endif %}
+
+      {% if skills %}
+        <section>      
+          <h2>Skills</h2>
+          <ul>
+            {% for skill in skills %}
+              <li>{{ skill }}</li>
+            {% endfor %}
+          </ul>
+        </section>
+      {% endif %}
+
+      {% if jobDescriptionAlignment %}
+        <section class="page-break">
+          <h2>Job Description Alignment</h2>
+          {% if jobDescriptionAlignment.summary %}
+            <h3>Summary</h3>
+            <p>{{ jobDescriptionAlignment.summary }}</p>
+          {% endif %}
+
+          {% if jobDescriptionAlignment.matches %}
+            <h3>Matches</h3>
+            <ul>
+            {% for match in jobDescriptionAlignment.matches %}
+              <li>{{ match }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+
+          {% if jobDescriptionAlignment.gaps %}
+            <h3>Gaps</h3>
+            <ul>
+            {% for gap in jobDescriptionAlignment.gaps %}
+              <li>{{ gap }}</li>
+            {% endfor %}
+            </ul>
+          {% endif %}
+
+          {% if jobDescriptionAlignment.strengths %}
+            <h3>Strengths</h3>
+            <ul>
+              {% for strength in jobDescriptionAlignment.strengths %}
+                <li>{{ strength }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          {% if jobDescriptionAlignment.weaknesses %}
+            <h3>Weaknesses</h3>
+            <ul>
+              {% for weakness in jobDescriptionAlignment.weaknesses %}
+                  <li>{{ weakness }}</li>
+              {% endfor %}
+            </ul>
+          {% endif %}
+
+          {% if jobDescriptionAlignment.scores %}
+            <h3>Skills analysis</h3>
+            <p>The closer the skill is to the edge of the chart, the better it meets the job description. You can interact with the graph.</p>
+            <div id="chart-container"></div>
+          {% endif %}
+        </section>
+      {% endif %}
+    </main>
+  </body>
+  <script src="https://code.highcharts.com/highcharts.js"></script>
+  <script src="https://code.highcharts.com/highcharts-more.js"></script>
+  <script src="https://code.highcharts.com/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com/modules/accessibility.js"></script>
+  <script>
+    /*
+    - scores (array) - a list of scores for each of the skills in the CV, TailorCV infers these values from the JD.
+      - skill (string)
+      - relevance: 0 to 4 (0 = skill not in JD, 4 = skill in JD and is very relevant)
+      - expertise: 0 to 4 (0 = skill not in CV, 4 = skill in CV and expertise >= JD expertise requirement)
+      - alignment: 0 to 4 (0 = relevance is 0 and expertise is 0, and 4 means the skill is very relevant and expertise is equal or higher to what is required in the JD.
+      - progression: 0 to 4 (0 = skill is part of a larger skill, 4 = skill is a larger skill)
+      - currency: 0 to 4 (0 = skill is not current, 4 = skill is current)
+      - genericness: 0 to 4 (0 = skill is very specific, 4 = skill is very generic)
+      - adaptability: 0 to 4 (0 = skill cannot be adapted, 4 = skill can be adapted)
+    */
+    const basics = {{ basics|safe }};
+    const job = {{ job|safe }};
+    const scores = {{ jobDescriptionAlignment.scores|safe }};
+    // Prepare the data for the chart
+    var chartData = scores.map(function(score) {
+      return {
+        type: 'area',
+        name: score.skill,
+        data: [score.relevance, score.expertise, score.alignment, score.progression, score.currency, score.genericness, score.adaptability],
+        pointPlacement: 'on'
+      };
+    });
+    window.addEventListener('load', function() {
+      plotChart();
+    });
+
+    function plotChart() {
+      // Create the chart
+      Highcharts.chart('chart-container', {
+        title: {
+          text: `${basics.name} skills analysis - ${job.title} @ ${job.company}`
+        },
+        chart: {
+          polar: true,
+          type: 'line'
+        },
+        pane: {
+          size: '80%'
+        },
+        xAxis: {
+          categories: ['Relevance', 'Expertise', 'Alignment', 'Progression', 'Currency', 'Genericness', 'Adaptability'],
+          tickmarkPlacement: 'on',
+          lineWidth: 0
+        },
+        yAxis: {
+          gridLineInterpolation: 'polygon',
+          lineWidth: 0,
+          min: 0
+        },
+        tooltip: {
+          shared: true,
+          pointFormat: '<span style="color:{series.color}">{series.name}: <b>{point.y:,.0f}</b><br/>'
+        },
+        legend: {
+          align: 'right',
+          verticalAlign: 'middle',
+          layout: 'vertical'
+        },
+        series: chartData
+      });
+    }
+  </script>
+{% endif %}
+</html>
